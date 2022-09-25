@@ -208,7 +208,7 @@ func NewMongodbRepositoryWithMutexesimpl[T any](client *mongo.Client, database s
 }
 
 func NewMongodbQueryFuncs[T any](coll *mongo.Collection, newZeroEntity arp.NewZeroEntity[T]) *MongodbQueryFuncs[T] {
-	getEntityId := arp.BuildGetEntityIdFunc[T](reflect.TypeOf(newZeroEntity()))
+	getEntityId := arp.BuildGetEntityIdFunc[T](reflect.TypeOf(newZeroEntity()).Elem())
 	return &MongodbQueryFuncs[T]{coll, newZeroEntity, getEntityId}
 }
 
