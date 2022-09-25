@@ -46,9 +46,11 @@ func (store *MongodbStore[T]) SaveAll(ctx context.Context, entitiesToInsert map[
 	for _, v := range entitiesToInsert {
 		toInsert = append(toInsert, v)
 	}
-	_, err := store.coll.InsertMany(ctx, toInsert)
-	if err != nil {
-		return err
+	if len(toInsert) > 0 {
+		_, err := store.coll.InsertMany(ctx, toInsert)
+		if err != nil {
+			return err
+		}
 	}
 	for k, v := range entitiesToUpdate {
 		filter := bson.D{{"_id", k}}
