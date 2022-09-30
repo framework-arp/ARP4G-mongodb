@@ -18,25 +18,24 @@ type MongodbStore[T any] struct {
 	newZeroEntity arp.NewZeroEntity[T]
 }
 
-func (store *MongodbStore[T]) Load(ctx context.Context, id any) (*T, error) {
+func (store *MongodbStore[T]) Load(ctx context.Context, id any) (entity T, found bool, err error) {
 	filter := bson.D{{"_id", id}}
 	sr := store.coll.FindOne(ctx, filter)
-	var err error
 	if err = sr.Err(); err == mongo.ErrNoDocuments {
-		return nil, nil
+		return entity, false, nil
 	}
 	var result bson.D
 	sr.Decode(&result)
 	var doc []byte
 	if doc, err = bson.Marshal(result); err != nil {
-		return nil, err
+		return entity, false, err
 	}
-	entity := store.newZeroEntity()
+	entity = store.newZeroEntity()
 	bson.Unmarshal(doc, entity)
-	return entity, nil
+	return entity, true, nil
 }
 
-func (store *MongodbStore[T]) Save(ctx context.Context, id any, entity *T) error {
+func (store *MongodbStore[T]) Save(ctx context.Context, id any, entity T) error {
 	_, err := store.coll.InsertOne(ctx, entity)
 	return err
 }
@@ -210,14 +209,12 @@ func NewMongodbRepositoryWithMutexesimpl[T any](client *mongo.Client, database s
 }
 
 func NewMongodbQueryFuncs[T any](coll *mongo.Collection, newZeroEntity arp.NewZeroEntity[T]) *MongodbQueryFuncs[T] {
-	getEntityId := arp.BuildGetEntityIdFunc[T](reflect.TypeOf(newZeroEntity()).Elem())
-	return &MongodbQueryFuncs[T]{coll, newZeroEntity, getEntityId}
+	return &MongodbQueryFuncs[T]{coll, newZeroEntity}
 }
 
 type MongodbQueryFuncs[T any] struct {
 	coll          *mongo.Collection
 	newZeroEntity arp.NewZeroEntity[T]
-	getEntityId   arp.GetEntityId[T]
 }
 
 func (qf *MongodbQueryFuncs[T]) QueryAllIds(ctx context.Context) (ids []any, err error) {
@@ -239,7 +236,8 @@ func (qf *MongodbQueryFuncs[T]) QueryAllIds(ctx context.Context) (ids []any, err
 		}
 		entity := qf.newZeroEntity()
 		bson.Unmarshal(doc, entity)
-		ids = append(ids, qf.getEntityId(entity))
+		//约定第一个属性为id
+		ids = append(ids, reflect.ValueOf(entity).Elem().Field(0).Interface())
 	}
 	return ids, nil
 }
