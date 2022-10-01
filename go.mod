@@ -3,7 +3,7 @@ module github.com/zhengchengdong/ARP4G-mongodb
 go 1.18
 
 require (
-	github.com/zhengchengdong/ARP4G v0.0.0-20220930082946-9113fd0b1761
+	github.com/zhengchengdong/ARP4G v0.0.0-20221001023135-c9b91a6f855c
 	go.mongodb.org/mongo-driver v1.10.2
 )
 
