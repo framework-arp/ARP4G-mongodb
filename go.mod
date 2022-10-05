@@ -3,8 +3,8 @@ module github.com/zhengchengdong/ARP4G-mongodb
 go 1.18
 
 require (
-	github.com/zhengchengdong/ARP4G v0.0.0-20221001094001-04431b43ac9d
-	go.mongodb.org/mongo-driver v1.10.2
+	github.com/zhengchengdong/ARP4G v0.0.0-20221005132734-9ce5be79c9f7
+	go.mongodb.org/mongo-driver v1.10.3
 )
 
 require (
@@ -16,7 +16,7 @@ require (
 	github.com/xdg-go/scram v1.1.1 // indirect
 	github.com/xdg-go/stringprep v1.0.3 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
-	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
+	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b // indirect
 	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
