@@ -62,7 +62,7 @@ func (store *MongodbStore[T]) SaveAll(ctx context.Context, entitiesToInsert map[
 }
 
 func (store *MongodbStore[T]) RemoveAll(ctx context.Context, ids []any) error {
-	for id := range ids {
+	for _, id := range ids {
 		filter := bson.D{{"_id", id}}
 		_, err := store.coll.DeleteOne(ctx, filter)
 		if err != nil {
