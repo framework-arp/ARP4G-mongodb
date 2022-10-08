@@ -32,6 +32,8 @@ orderService := &OrderService{mongoOrderRepo}
 这里使用**NewMongodbRepository**打包生成了MongoDB的仓库实现，仓库会使用MongoDB持久化，也会用MongoDB实现互斥锁。
 
 
+
+
 ```go
 func NewMongodbRepositoryWithMutexesimpl[T any](client *mongo.Client, database string, collection string, newEmptyEntity arp.NewZeroEntity[T], mutexesimpl arp.Mutexes) arp.QueryRepository[T]
 ```
