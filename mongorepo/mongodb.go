@@ -1,4 +1,4 @@
-package repoimpl
+package mongorepo
 
 import (
 	"context"
