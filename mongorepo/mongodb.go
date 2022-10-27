@@ -246,3 +246,26 @@ func (qf *MongodbQueryFuncs[T]) Count(ctx context.Context) (uint64, error) {
 	count, err := qf.coll.EstimatedDocumentCount(ctx)
 	return uint64(count), err
 }
+
+func (qf *MongodbQueryFuncs[T]) QueryAllByField(ctx context.Context, fieldName string, fieldValue any) ([]T, error) {
+	filter := bson.D{{fieldName, fieldValue}}
+	cursor, err := qf.coll.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	var results []bson.D
+	if err = cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+	entities := make([]T, 0)
+	for _, result := range results {
+		var doc []byte
+		if doc, err = bson.Marshal(result); err != nil {
+			return nil, err
+		}
+		entity := qf.newZeroEntity()
+		bson.Unmarshal(doc, entity)
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
