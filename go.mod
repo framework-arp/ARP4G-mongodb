@@ -1,13 +1,11 @@
-module github.com/zhengchengdong/ARP4G-mongodb
+module github.com/framework-arp/ARP4G-mongodb
 
 go 1.18
 
-require (
-	github.com/zhengchengdong/ARP4G v0.0.0-20221028095737-7dc9b786a5b5
-	go.mongodb.org/mongo-driver v1.10.3
-)
+require go.mongodb.org/mongo-driver v1.10.3
 
 require (
+	github.com/framework-arp/ARP4G v0.0.0-20221101135827-cade366e1843
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/montanaflynn/stats v0.6.6 // indirect

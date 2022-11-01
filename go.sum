@@ -1,6 +1,8 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/framework-arp/ARP4G v0.0.0-20221101135827-cade366e1843 h1:GQQmA7lOuECm3XDyTtS41TIxojf9nUGqZCHoLIHHrA8=
+github.com/framework-arp/ARP4G v0.0.0-20221101135827-cade366e1843/go.mod h1:rvQvrMyIeSid/e5WYhC9OTns0OrBJbhD4OW8MxVcLg8=
 github.com/golang/snappy v0.0.1/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/golang/snappy v0.0.4 h1:yAGX7huGHXlcLOEtBnF4w7FQwA26wojNCwOYAEhLjQM=
 github.com/golang/snappy v0.0.4/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
@@ -33,10 +35,6 @@ github.com/xdg-go/stringprep v1.0.3/go.mod h1:W3f5j4i+9rC0kuIEJL0ky1VpHXQU3ocBgk
 github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d/go.mod h1:rHwXgn7JulP+udvsHwJoVG1YGAP6VLg4y9I5dyZdqmA=
 github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a h1:fZHgsYlfvtyqToslyjUt3VOPF4J7aK/3MPcK7xp3PDk=
 github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a/go.mod h1:ul22v+Nro/R083muKhosV54bj5niojjWZvU8xrevuH4=
-github.com/zhengchengdong/ARP4G v0.0.0-20221027031006-475084b43c94 h1:YgoylsV4VbPiVAxMZapMcvxOn4JnI5pGE+R7sjTx9gA=
-github.com/zhengchengdong/ARP4G v0.0.0-20221027031006-475084b43c94/go.mod h1:ib4ENUaJ+wEb1d9QE4X6UaQPZ+6wTOVv4EAxiB3YPu8=
-github.com/zhengchengdong/ARP4G v0.0.0-20221028095737-7dc9b786a5b5 h1:C+J9o5CRBhDykBAK3skCrmLZXlbTmIh4tt+E8R5TKRE=
-github.com/zhengchengdong/ARP4G v0.0.0-20221028095737-7dc9b786a5b5/go.mod h1:ib4ENUaJ+wEb1d9QE4X6UaQPZ+6wTOVv4EAxiB3YPu8=
 go.mongodb.org/mongo-driver v1.10.3 h1:XDQEvmh6z1EUsXuIkXE9TaVeqHw6SwS1uf93jFs0HBA=
 go.mongodb.org/mongo-driver v1.10.3/go.mod h1:z4XpeoU6w+9Vht+jAFyLgVrD+jGSQQe0+CBWFHNiHt8=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
