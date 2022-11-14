@@ -187,39 +187,18 @@ func (mutexes *MongodbMutexes) UnlockAll(ctx context.Context, ids []any) {
 	}
 }
 
-func NewMongodbMutexes(client *mongo.Client, database string, collection string) *MongodbMutexes {
-	return &MongodbMutexes{client.Database(database).Collection("mutexes_" + collection), defaultLockRetryCount, defaultMaxLockTime}
-}
-
-func NewMongodbRepository[T any](client *mongo.Client, database string, collection string, newZeroEntity arp.NewZeroEntity[T]) arp.QueryRepository[T] {
-	if client == nil {
-		return arp.NewMockQueryRepository(newZeroEntity)
-	}
-	mutexesimpl := NewMongodbMutexes(client, database, collection)
-	return NewMongodbRepositoryWithMutexesimpl(client, database, collection, newZeroEntity, mutexesimpl)
-}
-
-func NewMongodbRepositoryWithMutexesimpl[T any](client *mongo.Client, database string, collection string, newEmptyEntity arp.NewZeroEntity[T], mutexesimpl arp.Mutexes) arp.QueryRepository[T] {
-	if client == nil {
-		return arp.NewMockQueryRepository(newEmptyEntity)
-	}
-	coll := client.Database(database).Collection(collection)
-	store := NewMongodbStore(coll, newEmptyEntity)
-	return arp.NewQueryRepository[T](arp.NewRepository[T](store, mutexesimpl, newEmptyEntity), NewMongodbQueryFuncs(coll, newEmptyEntity))
-}
-
-func NewMongodbQueryFuncs[T any](coll *mongo.Collection, newZeroEntity arp.NewZeroEntity[T]) *MongodbQueryFuncs[T] {
-	return &MongodbQueryFuncs[T]{coll, newZeroEntity}
-}
-
-type MongodbQueryFuncs[T any] struct {
+type MongodbRepository[T any] struct {
+	arp.Repository[T]
 	coll          *mongo.Collection
 	newZeroEntity arp.NewZeroEntity[T]
 }
 
-func (qf *MongodbQueryFuncs[T]) QueryAllIds(ctx context.Context) (ids []any, err error) {
+func (repo *MongodbRepository[T]) QueryAllIds(ctx context.Context) (ids []any, err error) {
+	if repo.coll == nil {
+		return nil, nil
+	}
 	opts := options.Find().SetProjection(bson.D{})
-	cur, err := qf.coll.Find(ctx, bson.D{}, opts)
+	cur, err := repo.coll.Find(ctx, bson.D{}, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +213,7 @@ func (qf *MongodbQueryFuncs[T]) QueryAllIds(ctx context.Context) (ids []any, err
 		if doc, err = bson.Marshal(result); err != nil {
 			return nil, err
 		}
-		entity := qf.newZeroEntity()
+		entity := repo.newZeroEntity()
 		bson.Unmarshal(doc, entity)
 		//约定第一个属性为id
 		ids = append(ids, reflect.ValueOf(entity).Elem().Field(0).Interface())
@@ -242,14 +221,20 @@ func (qf *MongodbQueryFuncs[T]) QueryAllIds(ctx context.Context) (ids []any, err
 	return ids, nil
 }
 
-func (qf *MongodbQueryFuncs[T]) Count(ctx context.Context) (uint64, error) {
-	count, err := qf.coll.EstimatedDocumentCount(ctx)
+func (repo *MongodbRepository[T]) Count(ctx context.Context) (uint64, error) {
+	if repo.coll == nil {
+		return 0, nil
+	}
+	count, err := repo.coll.EstimatedDocumentCount(ctx)
 	return uint64(count), err
 }
 
-func (qf *MongodbQueryFuncs[T]) QueryAllByField(ctx context.Context, fieldName string, fieldValue any) ([]T, error) {
+func (repo *MongodbRepository[T]) QueryAllByField(ctx context.Context, fieldName string, fieldValue any) ([]T, error) {
+	if repo.coll == nil {
+		return nil, nil
+	}
 	filter := bson.D{{fieldName, fieldValue}}
-	cursor, err := qf.coll.Find(ctx, filter)
+	cursor, err := repo.coll.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -263,9 +248,30 @@ func (qf *MongodbQueryFuncs[T]) QueryAllByField(ctx context.Context, fieldName s
 		if doc, err = bson.Marshal(result); err != nil {
 			return nil, err
 		}
-		entity := qf.newZeroEntity()
+		entity := repo.newZeroEntity()
 		bson.Unmarshal(doc, entity)
 		entities = append(entities, entity)
 	}
 	return entities, nil
+}
+
+func NewMongodbMutexes(client *mongo.Client, database string, collection string) *MongodbMutexes {
+	return &MongodbMutexes{client.Database(database).Collection("mutexes_" + collection), defaultLockRetryCount, defaultMaxLockTime}
+}
+
+func NewMongodbRepository[T any](client *mongo.Client, database string, collection string, newZeroEntity arp.NewZeroEntity[T]) *MongodbRepository[T] {
+	if client == nil {
+		return &MongodbRepository[T]{arp.NewMockRepository[T](newZeroEntity), nil, newZeroEntity}
+	}
+	mutexesimpl := NewMongodbMutexes(client, database, collection)
+	return NewMongodbRepositoryWithMutexesimpl(client, database, collection, newZeroEntity, mutexesimpl)
+}
+
+func NewMongodbRepositoryWithMutexesimpl[T any](client *mongo.Client, database string, collection string, newZeroEntity arp.NewZeroEntity[T], mutexesimpl arp.Mutexes) *MongodbRepository[T] {
+	if client == nil {
+		return &MongodbRepository[T]{arp.NewMockRepository[T](newZeroEntity), nil, newZeroEntity}
+	}
+	coll := client.Database(database).Collection(collection)
+	store := NewMongodbStore(coll, newZeroEntity)
+	return &MongodbRepository[T]{arp.NewRepository[T](store, mutexesimpl, newZeroEntity), coll, newZeroEntity}
 }
